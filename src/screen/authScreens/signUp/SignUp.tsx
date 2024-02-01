@@ -1,31 +1,54 @@
 import React, {useState} from 'react';
+import auth from '@react-native-firebase/auth';
+import ToastManager, {Toast} from 'toastify-react-native';
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   TextInput,
-  Button,
   TouchableOpacity,
-  StatusBar,
   ImageBackground,
 } from 'react-native';
+
 export default function SignUp() {
   const [email, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const handleRegister = () => {
+    auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        console.log('User account created & signed in!');
+        Toast.success('User account created & signed in!');
+      })
+      .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+          console.log('That email address is already in use!');
+        }
+
+        if (error.code === 'auth/invalid-email') {
+          console.log('That email address is invalid!');
+        }
+
+        console.error(error);
+      });
+  };
   return (
     <View style={styles.container}>
+      <ToastManager />
       <Text style={styles.main}>Sign up with Email</Text>
       <Text style={styles.des}>
-      Get chatting with friends and family today by signing up for our chat app!
-      </Text>   
+        Get chatting with friends and family today by signing up for our chat
+        app!
+      </Text>
       <View style={styles.inputView}>
         <Text style={styles.lable}>Your Name</Text>
         <TextInput
           style={styles.TextInput}
           placeholder="Your Name."
           placeholderTextColor="#003f5c"
-          onChangeText={userName => setEmail(userName)}
+          onChangeText={userName => setUserName(userName)}
+          value={userName}
         />
       </View>
       <View style={styles.inputView}>
@@ -35,6 +58,7 @@ export default function SignUp() {
           placeholder="Email."
           placeholderTextColor="#003f5c"
           onChangeText={email => setEmail(email)}
+          value={email}
         />
       </View>
       <View style={styles.inputView}>
@@ -45,6 +69,7 @@ export default function SignUp() {
           placeholderTextColor="#003f5c"
           secureTextEntry={true}
           onChangeText={password => setPassword(password)}
+          value={password}
         />
       </View>
       <View style={styles.inputView}>
@@ -55,12 +80,15 @@ export default function SignUp() {
           placeholderTextColor="#003f5c"
           secureTextEntry={true}
           onChangeText={password => setPassword(password)}
+          value={password}
         />
       </View>
-      <TouchableOpacity >
-      <ImageBackground style={styles.loginBtn} source={require('../../../assets/images/background.png')}>
-        <Text style={styles.loginBtnText}>Create Account</Text>
-        </ImageBackground>  
+      <TouchableOpacity onPress={handleRegister}>
+        <ImageBackground
+          style={styles.loginBtn}
+          source={require('../../../assets/images/background.png')}>
+          <Text style={styles.loginBtnText}>Create Account</Text>
+        </ImageBackground>
       </TouchableOpacity>
     </View>
   );
@@ -97,8 +125,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 14,
     fontWeight: '500',
-    color: '#3D4A7A'
-    ,top:20
+    color: '#3D4A7A',
+    top: 20,
   },
   loginBtn: {
     width: 327,
@@ -108,7 +136,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 20,
     backgroundColor: 'transparent',
-  }, 
+  },
   loginBtnText: {
     color: '#FFFFFF',
     fontSize: 16,
@@ -135,7 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#797C7B',
     fontFamily: 'Poppins',
-    marginBottom:50
+    marginBottom: 50,
   },
   img: {
     height: 48,
